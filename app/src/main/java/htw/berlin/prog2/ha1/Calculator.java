@@ -24,16 +24,22 @@ public class Calculator {
     /**
      * Empfängt den Wert einer gedrückten Zifferntaste. Da man nur eine Taste auf einmal
      * drücken kann muss der Wert positiv und einstellig sein und zwischen 0 und 9 liegen.
+     * Wenn der Bildschirm "0" anzeigt und keine Dezimalstelle vorhanden ist, wird die führende Null
+     * entfernt, bevor die neue Ziffer angezeigt wird. Andersfalls wird die Ziffer rechts an die vorhandene
+     * Zahl angehängt. Das ermöglicht es, dass Ziffern an bestehenden Werten oder Dezimalzahlen angefügt
+     * werden, ohne dass führende Nullen verbleiben.
      * Führt in jedem Fall dazu, dass die gerade gedrückte Ziffer auf dem Bildschirm angezeigt
      * oder rechts an die zuvor gedrückte Ziffer angehängt angezeigt wird.
-     * @param digit Die Ziffer, deren Taste gedrückt wurde
+     * @param digit Die Ziffer, deren Taste gedrückt wurde.
+     * @throws IllegalArgumentException wenn die Ziffer außerhalb des Bereiches 0-9 liegt.
      */
     public void pressDigitKey(int digit) {
         if(digit > 9 || digit < 0) throw new IllegalArgumentException();
 
-        if(screen.equals("0") || latestValue == Double.parseDouble(screen)) screen = "";
-
-        screen = screen + digit;
+        if(screen.equals("0") && !screen.contains(".")){
+            screen = "";
+        }
+        screen += digit;
     }
 
     /**
@@ -126,10 +132,13 @@ public class Calculator {
      * Seite hinzu und aktualisiert den Bildschirm. Daraufhin eingegebene Zahlen werden rechts vom
      * Trennzeichen angegeben und daher als Dezimalziffern interpretiert.
      * Beim zweimaligem Drücken, oder wenn bereits ein Trennzeichen angezeigt wird, passiert nichts.
+     * Falls der Bildschirm nur "0" anzeigt oder leer ist, wird automatisch "0." hinzugefügt, um sicherzustellen,
+     * dass das Dezimalformat korrekt ist. Diese Änderung stellt sicher, dass die Dezimalzahlen wie angezeigt werden.
      */
     public void pressDotKey() {
-        if(!screen.contains("."))
-            screen = screen + ".";
+        if(!screen.contains(".")) {
+            screen = (screen.equals("0") || screen.isEmpty()) ? "0." : screen + ".";
+        }
     }
 
     /**
